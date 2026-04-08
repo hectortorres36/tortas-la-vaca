@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tortas La Vaca - Menú</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #1a1a1a;
+      color: #ffffff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      background-color: #111111;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    }
+
+    /* HEADER */
+    .header {
+      background-color: #111;
+      text-align: center;
+      padding: 28px 20px 16px;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .header .emoji {
+      font-size: 3rem;
+      margin: 8px 0;
+    }
+
+    .header .subtitle {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 1.3rem;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+
+    .header .section-title-main {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #f5c518;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    /* SECTIONS */
+    .section {
+      padding: 0 20px 16px;
+    }
+
+    .section-header {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #f5c518;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 12px 0 8px;
+      border-top: 1px solid #333;
+      margin-top: 4px;
+    }
+
+    /* MENU ITEMS */
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 6px 0;
+      border-bottom: 1px solid #2a2a2a;
+      gap: 12px;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .item-name {
+      font-size: 0.95rem;
+      color: #eeeeee;
+      flex: 1;
+    }
+
+    .item-name .ingredients {
+      font-size: 0.82rem;
+      color: #aaaaaa;
+    }
+
+    .item-price {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #f5c518;
+      white-space: nowrap;
+    }
+
+    /* FOOTER */
+    .footer {
+      background-color: #f5c518;
+      color: #111111;
+      text-align: center;
+      padding: 14px 20px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+      <h1>Tortas La Vaca</h1>
+      <div class="emoji">🐮🍔</div>
+      <div class="subtitle">Menú</div>
+      <div class="section-title-main">TORTAS</div>
+    </div>
+
+    <!-- TORTAS -->
+    <div class="section">
+      <div class="item">
+        <div class="item-name">La mexicana <span class="ingredients">(Carne especial, frijoles, jamón)</span></div>
+        <div class="item-price">$3.50</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Doble carne <span class="ingredients">(Doble carne, jamón)</span></div>
+        <div class="item-price">$2.50</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Tocino <span class="ingredients">(Tocino, carne, jamón)</span></div>
+        <div class="item-price">$2.50</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Carne con huevo <span class="ingredients">(Carne, huevo, jamón)</span></div>
+        <div class="item-price">$2.50</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Cubana <span class="ingredients">(Frijoles, carne, jamón)</span></div>
+        <div class="item-price">$2.25</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Mixta <span class="ingredients">(Carne, salchicha, jamón)</span></div>
+        <div class="item-price">$2.25</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Carne <span class="ingredients">(Carne, jamón)</span></div>
+        <div class="item-price">$2.00</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Salchicha <span class="ingredients">(Salchicha, jamón)</span></div>
+        <div class="item-price">$1.75</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Sencilla <span class="ingredients">(Jamón)</span></div>
+        <div class="item-price">$1.50</div>
+      </div>
+    </div>
+
+    <!-- HAMBURGUESAS -->
+    <div class="section">
+      <div class="section-header">HAMBURGUESAS</div>
+      <div class="item">
+        <div class="item-name">Sencilla <span class="ingredients">(Carne, jamón)</span></div>
+        <div class="item-price">$1.75</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Doble <span class="ingredients">(Doble carne, jamón)</span></div>
+        <div class="item-price">$2.50</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Carne con huevo <span class="ingredients">(Carne, huevo, jamón)</span></div>
+        <div class="item-price">$2.50</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Tocino <span class="ingredients">(Carne, jamón, tocino)</span></div>
+        <div class="item-price">$2.50</div>
+      </div>
+    </div>
+
+    <!-- OTROS -->
+    <div class="section">
+      <div class="section-header">OTROS</div>
+      <div class="item">
+        <div class="item-name">Burrito con carne de res</div>
+        <div class="item-price">$3.50</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Tacos de res <span class="ingredients">(orden de 3)</span></div>
+        <div class="item-price">$2.50</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Quesadilla <span class="ingredients">(orden de 3)</span></div>
+        <div class="item-price">$3.00</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Hot dog sencillo</div>
+        <div class="item-price">$1.25</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Hot dog con tocino</div>
+        <div class="item-price">$1.75</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Hot dog de chili con carne</div>
+        <div class="item-price">$1.75</div>
+      </div>
+      <div class="item">
+        <div class="item-name">Nachos de chili con carne</div>
+        <div class="item-price">$1.50</div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      📍 12 Calle Poniente y 37 Av Sur<br/>
+      📞 Encargos: 7218-8020
+    </div>
+
+  </div>
+</body>
+</html>
