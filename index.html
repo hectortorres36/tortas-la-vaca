@@ -3,66 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tortas La Vaca - Menú</title>
+  <title>Tortas La Vaca - Menu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Satisfy&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* FONDO con patrón de comida animado */
+    /* ═══════════════════════════════
+       FONDO CON FOTOS DE COMIDA
+    ═══════════════════════════════ */
     body {
-      background-color: #0e0e0e;
-      color: #ffffff;
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: 'Poppins', sans-serif;
       min-height: 100vh;
-      padding: 20px;
+      padding: 24px 16px;
       position: relative;
       overflow-x: hidden;
+      background-color: #0a0a0a;
     }
 
-    /* Emojis de fondo flotantes */
-    .food-bg {
+    .bg-photos {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
       z-index: 0;
-      overflow: hidden;
     }
 
-    .food-bg span {
-      position: absolute;
-      font-size: 2rem;
-      opacity: 0.07;
-      animation: floatUp linear infinite;
+    .bg-photos div {
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.22) saturate(1.2);
     }
 
-    .food-bg span:nth-child(1)  { left: 5%;  animation-duration: 14s; animation-delay: 0s;   font-size: 2.2rem; }
-    .food-bg span:nth-child(2)  { left: 15%; animation-duration: 18s; animation-delay: 2s;   font-size: 1.6rem; }
-    .food-bg span:nth-child(3)  { left: 25%; animation-duration: 12s; animation-delay: 4s;   font-size: 2.5rem; }
-    .food-bg span:nth-child(4)  { left: 35%; animation-duration: 16s; animation-delay: 1s;   font-size: 1.8rem; }
-    .food-bg span:nth-child(5)  { left: 45%; animation-duration: 20s; animation-delay: 3s;   font-size: 2rem;   }
-    .food-bg span:nth-child(6)  { left: 55%; animation-duration: 13s; animation-delay: 5s;   font-size: 2.4rem; }
-    .food-bg span:nth-child(7)  { left: 65%; animation-duration: 17s; animation-delay: 0.5s; font-size: 1.7rem; }
-    .food-bg span:nth-child(8)  { left: 75%; animation-duration: 15s; animation-delay: 2.5s; font-size: 2.1rem; }
-    .food-bg span:nth-child(9)  { left: 85%; animation-duration: 19s; animation-delay: 4.5s; font-size: 1.5rem; }
-    .food-bg span:nth-child(10) { left: 92%; animation-duration: 11s; animation-delay: 1.5s; font-size: 2.3rem; }
+    .bg-p1 { background-image: url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80'); }
+    .bg-p2 { background-image: url('https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80'); }
+    .bg-p3 { background-image: url('https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&q=80'); }
+    .bg-p4 { background-image: url('https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80'); }
 
-    @keyframes floatUp {
-      0%   { transform: translateY(110vh) rotate(0deg);   opacity: 0;    }
-      10%  { opacity: 0.07; }
-      90%  { opacity: 0.07; }
-      100% { transform: translateY(-10vh)  rotate(360deg); opacity: 0; }
-    }
-
-    /* TARJETA PRINCIPAL */
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      background: linear-gradient(160deg, #1a1a1a 0%, #111111 60%, #1c1200 100%);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 12px 50px rgba(0,0,0,0.8), 0 0 0 1px rgba(245,197,24,0.15);
-      position: relative;
+    /* Gradiente encima de las fotos */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(10,8,0,0.55) 0%, rgba(0,0,0,0.75) 100%);
       z-index: 1;
+    }
+
+    /* ═══════════════════════════════
+       TARJETA PRINCIPAL
+    ═══════════════════════════════ */
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 460px;
+      margin: 0 auto;
+      background: linear-gradient(160deg, rgba(22,18,0,0.97) 0%, rgba(10,10,10,0.98) 100%);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 0 1px rgba(245,197,24,0.2);
+      animation: fadeUp 0.7s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* Línea dorada superior */
@@ -70,28 +75,33 @@
       content: '';
       display: block;
       height: 4px;
-      background: linear-gradient(90deg, transparent, #f5c518, transparent);
+      background: linear-gradient(90deg, transparent 0%, #f5c518 40%, #ff9500 60%, transparent 100%);
     }
 
-    /* ── HEADER ── */
+    /* ═══════════════════════════════
+       HEADER
+    ═══════════════════════════════ */
     .header {
       text-align: center;
-      padding: 20px 20px 10px;
-      background: linear-gradient(180deg, #1a1200 0%, transparent 100%);
+      padding: 22px 20px 14px;
+      background: linear-gradient(180deg, rgba(40,28,0,0.6) 0%, transparent 100%);
     }
 
     .logo-wrap {
-      margin: 0 auto 10px;
-      width: 150px;
-      height: 150px;
+      width: 145px;
+      height: 145px;
+      margin: 0 auto 12px;
       border-radius: 50%;
-      background: radial-gradient(circle, #2a1e00 0%, #111 80%);
-      border: 3px solid rgba(245,197,24,0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border: 3px solid rgba(245,197,24,0.5);
+      box-shadow: 0 0 0 6px rgba(245,197,24,0.08), 0 8px 30px rgba(0,0,0,0.6);
       overflow: hidden;
-      box-shadow: 0 4px 20px rgba(245,197,24,0.2);
+      background: #111;
+      animation: popIn 0.6s 0.3s ease both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
     }
 
     .logo-wrap img {
@@ -100,194 +110,291 @@
       object-fit: cover;
     }
 
-    .header h1 {
-      font-size: 1.8rem;
-      font-weight: 900;
-      letter-spacing: 3px;
-      color: #ffffff;
-      text-transform: uppercase;
-      text-shadow: 0 2px 8px rgba(245,197,24,0.3);
-      margin-bottom: 4px;
-    }
-
-    .divider-gold {
-      width: 60%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #f5c518, transparent);
-      margin: 8px auto;
-    }
-
-    /* ── CATEGORY TITLE ── */
-    .cat-title {
-      text-align: center;
-      font-size: 1.3rem;
-      font-weight: 900;
+    .brand-name {
+      font-family: 'Satisfy', cursive;
+      font-size: 2rem;
       color: #f5c518;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      padding: 10px 0 6px;
-      position: relative;
+      text-shadow: 0 2px 12px rgba(245,197,24,0.4);
+      letter-spacing: 1px;
+      line-height: 1.1;
+      animation: fadeUp 0.6s 0.4s ease both;
     }
 
-    .cat-title::before,
-    .cat-title::after {
-      content: '✦';
+    .brand-sub {
       font-size: 0.7rem;
-      color: #f5c518;
-      vertical-align: middle;
-      margin: 0 8px;
-      opacity: 0.7;
+      font-weight: 600;
+      letter-spacing: 5px;
+      color: #aaa;
+      text-transform: uppercase;
+      margin-top: 4px;
+      animation: fadeUp 0.6s 0.5s ease both;
     }
 
-    /* ── SECTIONS ── */
-    .section {
-      padding: 0 18px 14px;
-    }
-
-    .section-divider {
+    .header-divider {
+      width: 50%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, #333, transparent);
-      margin: 2px 0 0;
+      background: linear-gradient(90deg, transparent, #f5c518, transparent);
+      margin: 12px auto 0;
     }
 
-    /* ── MENU ITEMS ── */
+    /* ═══════════════════════════════
+       CATEGORIAS
+    ═══════════════════════════════ */
+    .section { padding: 0 16px 12px; }
+
+    .cat-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 0 8px;
+    }
+
+    .cat-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #333);
+    }
+
+    .cat-line.right {
+      background: linear-gradient(90deg, #333, transparent);
+    }
+
+    .cat-title {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #f5c518;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .cat-icon { font-size: 1.1rem; }
+
+    /* ═══════════════════════════════
+       ITEMS DEL MENU
+    ═══════════════════════════════ */
     .item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 7px 0;
-      border-bottom: 1px solid #1e1e1e;
+      padding: 8px 10px;
+      margin: 2px 0;
+      border-radius: 10px;
       gap: 10px;
+      transition: background 0.2s;
+      cursor: default;
     }
 
-    .item:last-child { border-bottom: none; }
+    .item:hover {
+      background: rgba(245,197,24,0.07);
+    }
+
+    .item-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      flex: 1;
+    }
 
     .item-name {
-      font-size: 0.92rem;
+      font-size: 0.88rem;
+      font-weight: 600;
       color: #e8e8e8;
-      flex: 1;
       line-height: 1.3;
     }
 
     .item-name .ingredients {
       display: block;
-      font-size: 0.76rem;
-      color: #888;
+      font-size: 0.73rem;
+      font-weight: 400;
+      color: #777;
       margin-top: 1px;
     }
 
     .item-price {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 800;
       color: #f5c518;
       white-space: nowrap;
-      background: rgba(245,197,24,0.08);
-      padding: 2px 8px;
+      background: rgba(245,197,24,0.1);
+      border: 1px solid rgba(245,197,24,0.25);
+      padding: 3px 10px;
       border-radius: 20px;
-      border: 1px solid rgba(245,197,24,0.2);
     }
 
-    /* ── FOOTER ── */
-    .footer {
-      background: linear-gradient(135deg, #f5c518, #e0a800);
-      color: #111111;
-      text-align: center;
-      padding: 16px 20px;
-      font-weight: 800;
-      font-size: 0.9rem;
-      line-height: 1.7;
-      letter-spacing: 0.5px;
-    }
-
-    .footer .phone {
-      font-size: 1.1rem;
-      font-weight: 900;
+    /* Badge especial */
+    .badge {
+      display: inline-block;
+      font-size: 0.58rem;
+      font-weight: 700;
+      text-transform: uppercase;
       letter-spacing: 1px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 5px;
+      vertical-align: middle;
     }
+
+    .badge-popular {
+      background: rgba(255,60,60,0.15);
+      color: #ff6b6b;
+      border: 1px solid rgba(255,60,60,0.3);
+    }
+
+    .badge-especial {
+      background: rgba(245,197,24,0.15);
+      color: #f5c518;
+      border: 1px solid rgba(245,197,24,0.3);
+    }
+
+    /* ═══════════════════════════════
+       FOOTER
+    ═══════════════════════════════ */
+    .footer {
+      margin-top: 4px;
+      background: linear-gradient(135deg, #f5c518 0%, #e09800 100%);
+      padding: 16px 20px;
+      text-align: center;
+    }
+
+    .footer-address {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #3a2800;
+      letter-spacing: 0.3px;
+      margin-bottom: 10px;
+    }
+
+    .call-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #111;
+      color: #f5c518;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      padding: 10px 28px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .call-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+
+    .call-btn .phone-icon { font-size: 1.1rem; }
   </style>
 </head>
 <body>
 
-  <!-- FONDO ANIMADO DE COMIDA -->
-  <div class="food-bg">
-    <span>🌮</span>
-    <span>🍔</span>
-    <span>🌯</span>
-    <span>🧀</span>
-    <span>🥩</span>
-    <span>🌭</span>
-    <span>🍟</span>
-    <span>🧅</span>
-    <span>🥓</span>
-    <span>🫔</span>
+  <!-- FOTOS DE FONDO -->
+  <div class="bg-photos">
+    <div class="bg-p1"></div>
+    <div class="bg-p2"></div>
+    <div class="bg-p3"></div>
+    <div class="bg-p4"></div>
   </div>
+  <div class="bg-overlay"></div>
 
   <div class="container">
 
     <!-- HEADER -->
     <div class="header">
       <div class="logo-wrap">
-        <img src="logo.jpeg" alt="Logo Tortas La Vaca" />
+        <img src="logo.jpeg" alt="Tortas La Vaca" />
       </div>
-      <h1>Tortas La Vaca</h1>
-      <div class="divider-gold"></div>
+      <div class="brand-name">Tortas La Vaca</div>
+      <div class="brand-sub">Menu</div>
+      <div class="header-divider"></div>
     </div>
 
     <!-- TORTAS -->
     <div class="section">
-      <div class="cat-title">Tortas</div>
-      <div class="section-divider"></div>
+      <div class="cat-header">
+        <div class="cat-line"></div>
+        <span class="cat-icon">🥖</span>
+        <div class="cat-title">Tortas</div>
+        <span class="cat-icon">🥖</span>
+        <div class="cat-line right"></div>
+      </div>
+
       <div class="item">
-        <div class="item-name">La mexicana
-          <span class="ingredients">Carne especial, frijoles, jamón</span>
+        <div class="item-left">
+          <div class="item-name">
+            La mexicana
+            <span class="badge badge-especial">Especial</span>
+            <span class="ingredients">Carne especial, frijoles, jamon</span>
+          </div>
         </div>
         <div class="item-price">$3.50</div>
       </div>
       <div class="item">
-        <div class="item-name">Doble carne
-          <span class="ingredients">Doble carne, jamón</span>
+        <div class="item-left">
+          <div class="item-name">Doble carne
+            <span class="badge badge-popular">Popular</span>
+            <span class="ingredients">Doble carne, jamon</span>
+          </div>
         </div>
         <div class="item-price">$2.50</div>
       </div>
       <div class="item">
-        <div class="item-name">Tocino
-          <span class="ingredients">Tocino, carne, jamón</span>
+        <div class="item-left">
+          <div class="item-name">Tocino
+            <span class="ingredients">Tocino, carne, jamon</span>
+          </div>
         </div>
         <div class="item-price">$2.50</div>
       </div>
       <div class="item">
-        <div class="item-name">Carne con huevo
-          <span class="ingredients">Carne, huevo, jamón</span>
+        <div class="item-left">
+          <div class="item-name">Carne con huevo
+            <span class="ingredients">Carne, huevo, jamon</span>
+          </div>
         </div>
         <div class="item-price">$2.50</div>
       </div>
       <div class="item">
-        <div class="item-name">Cubana
-          <span class="ingredients">Frijoles, carne, jamón</span>
+        <div class="item-left">
+          <div class="item-name">Cubana
+            <span class="ingredients">Frijoles, carne, jamon</span>
+          </div>
         </div>
         <div class="item-price">$2.25</div>
       </div>
       <div class="item">
-        <div class="item-name">Mixta
-          <span class="ingredients">Carne, salchicha, jamón</span>
+        <div class="item-left">
+          <div class="item-name">Mixta
+            <span class="ingredients">Carne, salchicha, jamon</span>
+          </div>
         </div>
         <div class="item-price">$2.25</div>
       </div>
       <div class="item">
-        <div class="item-name">Carne
-          <span class="ingredients">Carne, jamón</span>
+        <div class="item-left">
+          <div class="item-name">Carne
+            <span class="ingredients">Carne, jamon</span>
+          </div>
         </div>
         <div class="item-price">$2.00</div>
       </div>
       <div class="item">
-        <div class="item-name">Salchicha
-          <span class="ingredients">Salchicha, jamón</span>
+        <div class="item-left">
+          <div class="item-name">Salchicha
+            <span class="ingredients">Salchicha, jamon</span>
+          </div>
         </div>
         <div class="item-price">$1.75</div>
       </div>
       <div class="item">
-        <div class="item-name">Sencilla
-          <span class="ingredients">Jamón</span>
+        <div class="item-left">
+          <div class="item-name">Sencilla
+            <span class="ingredients">Jamon</span>
+          </div>
         </div>
         <div class="item-price">$1.50</div>
       </div>
@@ -295,29 +402,44 @@
 
     <!-- HAMBURGUESAS -->
     <div class="section">
-      <div class="cat-title">Hamburguesas</div>
-      <div class="section-divider"></div>
+      <div class="cat-header">
+        <div class="cat-line"></div>
+        <span class="cat-icon">🍔</span>
+        <div class="cat-title">Hamburguesas</div>
+        <span class="cat-icon">🍔</span>
+        <div class="cat-line right"></div>
+      </div>
+
       <div class="item">
-        <div class="item-name">Sencilla
-          <span class="ingredients">Carne, jamón</span>
+        <div class="item-left">
+          <div class="item-name">Sencilla
+            <span class="ingredients">Carne, jamon</span>
+          </div>
         </div>
         <div class="item-price">$1.75</div>
       </div>
       <div class="item">
-        <div class="item-name">Doble
-          <span class="ingredients">Doble carne, jamón</span>
+        <div class="item-left">
+          <div class="item-name">Doble
+            <span class="badge badge-popular">Popular</span>
+            <span class="ingredients">Doble carne, jamon</span>
+          </div>
         </div>
         <div class="item-price">$2.50</div>
       </div>
       <div class="item">
-        <div class="item-name">Carne con huevo
-          <span class="ingredients">Carne, huevo, jamón</span>
+        <div class="item-left">
+          <div class="item-name">Carne con huevo
+            <span class="ingredients">Carne, huevo, jamon</span>
+          </div>
         </div>
         <div class="item-price">$2.50</div>
       </div>
       <div class="item">
-        <div class="item-name">Tocino
-          <span class="ingredients">Carne, jamón, tocino</span>
+        <div class="item-left">
+          <div class="item-name">Tocino
+            <span class="ingredients">Carne, jamon, tocino</span>
+          </div>
         </div>
         <div class="item-price">$2.50</div>
       </div>
@@ -325,46 +447,70 @@
 
     <!-- OTROS -->
     <div class="section">
-      <div class="cat-title">Otros</div>
-      <div class="section-divider"></div>
+      <div class="cat-header">
+        <div class="cat-line"></div>
+        <span class="cat-icon">🌮</span>
+        <div class="cat-title">Otros</div>
+        <span class="cat-icon">🌮</span>
+        <div class="cat-line right"></div>
+      </div>
+
       <div class="item">
-        <div class="item-name">Burrito con carne de res</div>
+        <div class="item-left">
+          <div class="item-name">Burrito con carne de res
+            <span class="badge badge-especial">Especial</span>
+          </div>
+        </div>
         <div class="item-price">$3.50</div>
       </div>
       <div class="item">
-        <div class="item-name">Tacos de res
-          <span class="ingredients">Orden de 3</span>
+        <div class="item-left">
+          <div class="item-name">Tacos de res
+            <span class="ingredients">Orden de 3</span>
+          </div>
         </div>
         <div class="item-price">$2.50</div>
       </div>
       <div class="item">
-        <div class="item-name">Quesadilla
-          <span class="ingredients">Orden de 3</span>
+        <div class="item-left">
+          <div class="item-name">Quesadilla
+            <span class="ingredients">Orden de 3</span>
+          </div>
         </div>
         <div class="item-price">$3.00</div>
       </div>
       <div class="item">
-        <div class="item-name">Hot dog sencillo</div>
+        <div class="item-left">
+          <div class="item-name">Hot dog sencillo</div>
+        </div>
         <div class="item-price">$1.25</div>
       </div>
       <div class="item">
-        <div class="item-name">Hot dog con tocino</div>
+        <div class="item-left">
+          <div class="item-name">Hot dog con tocino</div>
+        </div>
         <div class="item-price">$1.75</div>
       </div>
       <div class="item">
-        <div class="item-name">Hot dog de chili con carne</div>
+        <div class="item-left">
+          <div class="item-name">Hot dog de chili con carne</div>
+        </div>
         <div class="item-price">$1.75</div>
       </div>
       <div class="item">
-        <div class="item-name">Nachos de chili con carne</div>
+        <div class="item-left">
+          <div class="item-name">Nachos de chili con carne</div>
+        </div>
         <div class="item-price">$1.50</div>
       </div>
     </div>
 
     <!-- FOOTER -->
     <div class="footer">
-      📍 12 Calle Poniente y 37 Av Sur<br/>
-      <span class="phone">📞 7218-8020</span>
+      <div class="footer-address">📍 12 Calle Poniente y 37 Av Sur</div>
+      <a class="call-btn" href="tel:72188020">
+        <span class="phone-icon">📞</span> 7218-8020
+      </a>
     </div>
 
   </div>
