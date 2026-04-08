@@ -237,19 +237,6 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.3); transition: transform 0.15s;
     }
     .wa-btn:hover { transform: scale(1.04); }
-    .share-btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      background: #fff; color: #3a2800;
-      font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1rem;
-      padding: 10px 28px; border-radius: 50px; border: none; cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.2); transition: transform 0.15s;
-      margin-top: 10px; width: 100%;
-    }
-    .share-btn:hover { transform: scale(1.02); }
-    .share-toast {
-      display: none; margin-top: 8px;
-      font-size: 0.8rem; font-weight: 600; color: #3a2800;
-    }
 
     /* ═══════════════════════════════
        CARRITO FLOTANTE
@@ -524,8 +511,6 @@
           WhatsApp
         </a>
       </div>
-      <button class="share-btn" onclick="compartirMenu()">🔗 Compartir menú</button>
-      <div class="share-toast" id="toast">✅ Enlace copiado al portapapeles</div>
     </div>
 
   </div>
@@ -563,19 +548,6 @@
     function applyTheme(t) {
       document.documentElement.setAttribute('data-theme', t);
       themeBtn.textContent = t === 'dark' ? '🌙' : '☀️';
-    }
-
-    // ── COMPARTIR ─────────────────────────
-    async function compartirMenu() {
-      const url = window.location.href;
-      const toast = document.getElementById('toast');
-      if (navigator.share) {
-        await navigator.share({ title: 'Tortas La Vaca', text: 'Mira el menu de Tortas La Vaca', url });
-        return;
-      }
-      await navigator.clipboard.writeText(url);
-      toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
 
     // ── CARRITO ───────────────────────────
