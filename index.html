@@ -273,8 +273,8 @@
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 201;
       background: var(--bg-cart);
       border-radius: 24px 24px 0 0;
-      padding: 0 0 24px;
-      max-height: 80vh; overflow-y: auto;
+      padding: 0 0 max(24px, env(safe-area-inset-bottom));
+      max-height: 92vh; overflow-y: auto;
       transform: translateY(100%);
       transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1), background 0.4s;
       box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
@@ -284,10 +284,16 @@
     .cart-panel-header {
       position: sticky; top: 0;
       background: var(--bg-cart);
-      padding: 16px 20px 12px;
+      padding: 12px 20px 12px;
       border-bottom: 1px solid rgba(245,197,24,0.15);
       display: flex; justify-content: space-between; align-items: center;
       transition: background 0.4s;
+    }
+    .cart-drag-bar {
+      width: 36px; height: 4px;
+      background: rgba(245,197,24,0.3);
+      border-radius: 2px;
+      margin: 10px auto 0;
     }
     .cart-panel-title {
       font-size: 1.1rem; font-weight: 900;
@@ -393,6 +399,94 @@
     }
     .cart-name-input::placeholder { color: var(--text-ingr); }
     .cart-name-input:focus { border-color: #f5c518; }
+
+    .cart-notes-wrap {
+      margin-bottom: 14px;
+    }
+    .cart-notes-label {
+      display: block; font-size: 0.78rem; font-weight: 600;
+      color: var(--text-ingr); margin-bottom: 6px;
+      transition: color 0.4s;
+    }
+    .cart-notes-input {
+      width: 100%; padding: 10px 14px;
+      background: var(--bg-cart-item);
+      border: 1px solid rgba(245,197,24,0.25);
+      border-radius: 10px;
+      font-family: 'Poppins', sans-serif; font-size: 0.85rem;
+      color: var(--text-cart);
+      outline: none; resize: none;
+      transition: border-color 0.2s, background 0.4s, color 0.4s;
+      min-height: 70px;
+    }
+    .cart-notes-input::placeholder { color: var(--text-ingr); }
+    .cart-notes-input:focus { border-color: #f5c518; }
+
+    /* ═══════════════════════════════
+       ANIMACIONES EXTRA
+    ═══════════════════════════════ */
+
+    /* Punto volador al agregar */
+    .fly-dot {
+      position: fixed;
+      width: 14px; height: 14px;
+      background: #f5c518;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(245,197,24,0.7);
+    }
+
+    /* Entrada de ítems del carrito */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .cart-item { animation: slideIn 0.28s ease both; }
+
+    /* Salida de ítem */
+    @keyframes removeItem {
+      to { opacity: 0; transform: translateX(28px) scale(0.85); }
+    }
+    .cart-item.removing {
+      animation: removeItem 0.25s ease forwards;
+      pointer-events: none;
+    }
+
+    /* Rebote del contador del FAB */
+    @keyframes countBounce {
+      0%   { transform: scale(1); }
+      35%  { transform: scale(1.55); }
+      65%  { transform: scale(0.82); }
+      100% { transform: scale(1); }
+    }
+    .cart-count.bounce { animation: countBounce 0.36s ease; }
+
+    /* Scroll reveal secciones */
+    .section.reveal-ready {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    .section.reveal-ready.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Ripple en botón + */
+    .add-btn { overflow: hidden; }
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      transform: translate(-50%, -50%) scale(0);
+      animation: rippleAnim 0.38s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      to { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -543,6 +637,7 @@
   <!-- PANEL CARRITO -->
   <div class="cart-backdrop" id="cartBackdrop" onclick="cerrarCarrito()"></div>
   <div class="cart-panel" id="cartPanel">
+    <div class="cart-drag-bar"></div>
     <div class="cart-panel-header">
       <div class="cart-panel-title">🛒 Mi pedido</div>
       <button class="cart-close" onclick="cerrarCarrito()">✕</button>
@@ -591,8 +686,22 @@
     function cambiarQty(nombre, delta) {
       const idx = carrito.findIndex(i => i.nombre === nombre);
       if (idx < 0) return;
-      carrito[idx].qty += delta;
-      if (carrito[idx].qty <= 0) carrito.splice(idx, 1);
+      const newQty = carrito[idx].qty + delta;
+      if (newQty <= 0) {
+        const el = document.querySelector(`.cart-item[data-nombre="${nombre}"]`);
+        if (el) {
+          el.classList.add('removing');
+          setTimeout(() => {
+            carrito.splice(idx, 1);
+            actualizarCarrito();
+            renderCarrito();
+          }, 260);
+          return;
+        }
+        carrito.splice(idx, 1);
+      } else {
+        carrito[idx].qty = newQty;
+      }
       actualizarCarrito();
       renderCarrito();
     }
@@ -609,6 +718,9 @@
       const count = document.getElementById('cartCount');
       count.textContent = total;
       fab.style.display = total > 0 ? 'flex' : 'none';
+      count.classList.remove('bounce');
+      void count.offsetWidth;
+      count.classList.add('bounce');
     }
 
     function renderCarrito() {
@@ -619,8 +731,8 @@
       }
 
       const total = carrito.reduce((s, i) => s + i.precio * i.qty, 0);
-      const items = carrito.map(i => `
-        <div class="cart-item">
+      const items = carrito.map((i, idx) => `
+        <div class="cart-item" data-nombre="${i.nombre}" style="animation-delay:${idx * 0.07}s">
           <div class="cart-item-name">${i.nombre}</div>
           <div class="cart-controls">
             <button class="ctrl-btn" onclick="cambiarQty('${i.nombre}', -1)">−</button>
@@ -637,6 +749,10 @@
           <div class="cart-name-wrap">
             <label class="cart-name-label">Tu nombre</label>
             <input class="cart-name-input" id="cartName" type="text" placeholder="Ej: Maria, Juan..." maxlength="40" />
+          </div>
+          <div class="cart-notes-wrap">
+            <label class="cart-notes-label">Peticiones especiales</label>
+            <textarea class="cart-notes-input" id="cartNotes" placeholder="Ej: sin aguacate, sin salsa, sin lechuga..." maxlength="200"></textarea>
           </div>
           <div class="cart-total">
             <span class="cart-total-label">Total</span>
@@ -665,15 +781,72 @@
     function pedirPorWhatsapp() {
       const total = carrito.reduce((s, i) => s + i.precio * i.qty, 0);
       const nombre = (document.getElementById('cartName')?.value || '').trim();
+      const notas = (document.getElementById('cartNotes')?.value || '').trim();
       let msg = nombre ? `Hola! Soy *${nombre}* y quiero hacer el siguiente pedido:\n\n`
                        : 'Hola! Quiero hacer el siguiente pedido:\n\n';
       carrito.forEach(i => {
         msg += `• ${i.qty}x ${i.nombre} - $${(i.precio * i.qty).toFixed(2)}\n`;
       });
       msg += `\n*Total: $${total.toFixed(2)}*`;
+      if (notas) msg += `\n\n📝 *Peticiones especiales:* ${notas}`;
       const url = 'https://wa.me/50372188020?text=' + encodeURIComponent(msg);
       window.open(url, '_blank');
     }
+
+    // ── FLY + RIPPLE (delegacion) ─────────
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.add-btn');
+      if (!btn) return;
+      addRipple(btn, e);
+      setTimeout(() => flyToCart(btn), 30);
+    });
+
+    function flyToCart(btn) {
+      const fab = document.getElementById('cartFab');
+      const fabRect = fab.getBoundingClientRect();
+      if (fabRect.width === 0) return;
+      const btnRect = btn.getBoundingClientRect();
+      const dot = document.createElement('div');
+      dot.className = 'fly-dot';
+      dot.style.left = (btnRect.left + btnRect.width / 2) + 'px';
+      dot.style.top  = (btnRect.top  + btnRect.height / 2) + 'px';
+      document.body.appendChild(dot);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        dot.style.transition = 'left .44s cubic-bezier(.4,0,.2,1), top .44s cubic-bezier(.4,0,.2,1), opacity .18s .28s, transform .18s .28s';
+        dot.style.left = (fabRect.left + fabRect.width / 2) + 'px';
+        dot.style.top  = (fabRect.top  + fabRect.height / 2) + 'px';
+        dot.style.opacity = '0';
+        dot.style.transform = 'translate(-50%,-50%) scale(0)';
+      }));
+      setTimeout(() => dot.remove(), 680);
+    }
+
+    function addRipple(btn, e) {
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      const size = btn.offsetWidth;
+      const rect = btn.getBoundingClientRect();
+      r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left}px;top:${e.clientY - rect.top}px`;
+      btn.appendChild(r);
+      r.addEventListener('animationend', () => r.remove());
+    }
+
+    // ── SCROLL REVEAL ─────────────────────
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.section').forEach((s, i) => {
+      s.classList.add('reveal-ready');
+      s.style.transitionDelay = `${0.4 + i * 0.13}s`;
+      revealObs.observe(s);
+      s.addEventListener('transitionend', () => { s.style.transitionDelay = '0s'; }, { once: true });
+    });
   </script>
 </body>
 </html>
