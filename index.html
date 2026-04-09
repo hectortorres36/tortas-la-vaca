@@ -793,6 +793,11 @@
       window.open(url, '_blank');
     }
 
+    // ── SERVICE WORKER ────────────────────
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js');
+    }
+
     // ── FLY + RIPPLE (delegacion) ─────────
     document.addEventListener('click', function(e) {
       const btn = e.target.closest('.add-btn');
