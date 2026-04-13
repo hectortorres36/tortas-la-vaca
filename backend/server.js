@@ -10,25 +10,21 @@ const adminRouter  = require('./routes/admin');
 const app  = express();
 const PORT = parseInt(process.env.PORT) || 3000;
 
-// ── Seguridad ───────────────────────────────────────────────
-app.use(helmet());
+// Necesario para que rate-limit funcione correctamente detrás de ngrok/proxies
+app.set('trust proxy', 1);
 
-// CORS: solo permitir el frontend local y el mismo servidor
-const allowedOrigins = [
-  'http://localhost',
-  'http://127.0.0.1',
-  'http://localhost:5500',   // Live Server de VS Code
-  'http://127.0.0.1:5500',
-  'null',                    // file:// en navegador
-];
-app.use(cors({
-  origin: (origin, cb) => {
-    // Permitir sin origin (Postman, curl) y orígenes locales
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    cb(new Error('CORS bloqueado: ' + origin));
-  },
-  methods: ['GET', 'POST'],
-}));
+// ── Seguridad ───────────────────────────────────────────────
+app.use(helmet({ crossOriginResourcePolicy: false }));
+
+// CORS: permitir cualquier origen (necesario para archivos locales y Railway)
+const corsOptions = {
+  origin: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'ngrok-skip-browser-warning'],
+  credentials: true,
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Manejar preflight OPTIONS explícitamente
 
 // Rate limit global: 200 req / 15 min por IP
 app.use(rateLimit({
