@@ -407,7 +407,9 @@
 </div>
 
 <script>
-  const API = 'https://tortas-la-vaca-production.up.railway.app/api';
+  const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000/api'
+    : 'https://tortas-la-vaca-production.up.railway.app/api';
   let token = localStorage.getItem('admin_token') || '';
 
   // ── Auth ──────────────────────────────────────────────────
