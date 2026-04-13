@@ -914,10 +914,32 @@
       document.getElementById('cartPanel').classList.remove('open');
     }
 
-    function pedirPorWhatsapp() {
-      const total = carrito.reduce((s, i) => s + i.precio * i.qty, 0);
+    const BACKEND_URL = 'http://localhost:3000';
+
+    async function guardarPedidoEnBD(nombre, notas, total) {
+      try {
+        await fetch(`${BACKEND_URL}/api/pedidos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cliente_nombre: nombre || 'Anónimo',
+            items: carrito.map(i => ({ nombre: i.nombre, precio: i.precio, qty: i.qty })),
+            notas: notas || '',
+          }),
+        });
+      } catch {
+        // Si el backend no está disponible, el pedido igual se manda por WhatsApp
+      }
+    }
+
+    async function pedirPorWhatsapp() {
+      const total  = carrito.reduce((s, i) => s + i.precio * i.qty, 0);
       const nombre = (document.getElementById('cartName')?.value || '').trim();
-      const notas = (document.getElementById('cartNotes')?.value || '').trim();
+      const notas  = (document.getElementById('cartNotes')?.value || '').trim();
+
+      // Guardar en BD en segundo plano (no bloquea el envío por WhatsApp)
+      guardarPedidoEnBD(nombre, notas, total);
+
       let msg = nombre ? `Hola! Soy *${nombre}* y quiero hacer el siguiente pedido:\n\n`
                        : 'Hola! Quiero hacer el siguiente pedido:\n\n';
       carrito.forEach(i => {
