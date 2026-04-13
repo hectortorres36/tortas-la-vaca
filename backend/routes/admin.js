@@ -79,12 +79,10 @@ router.get('/pedidos', authMiddleware, async (req, res) => {
     if (pedidos.length === 0) return res.json([]);
 
     const ids = pedidos.map(p => p.id);
-    const placeholders = ids.map(() => '?').join(',');
-    const [items] = await pool.execute(`
-      SELECT pedido_id, nombre_item, cantidad, precio_unitario
-      FROM pedido_items
-      WHERE pedido_id IN (${placeholders})
-    `, ids);
+    const [items] = await pool.query(
+      'SELECT pedido_id, nombre_item, cantidad, precio_unitario FROM pedido_items WHERE pedido_id IN (?)',
+      [ids]
+    );
 
     const itemsMap = {};
     for (const it of items) {
