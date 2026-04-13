@@ -31,7 +31,7 @@ async function testConnection() {
   } catch (err) {
     console.error('❌ Error conectando a MySQL:', err.message);
     console.error('   Verifica las credenciales en backend/.env');
-    process.exit(1);
+    // No hacer process.exit para que Railway no reinicie en loop
   }
 }
 
