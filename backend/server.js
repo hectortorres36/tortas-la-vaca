@@ -45,7 +45,9 @@ app.use('/api/admin',   adminRouter);
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 
 // ── Frontend estático ──────────────────────────────────────
-const PUBLIC_DIR   = path.join(__dirname, '..');
+// Copia de los archivos de la raíz del repo: Railway solo despliega esta
+// carpeta (Root Directory = /backend), así que deben vivir aquí también.
+const PUBLIC_DIR   = path.join(__dirname, 'public');
 const PUBLIC_FILES = ['index.html', 'admin.html', 'logo.jpeg', 'logo.svg', 'service-worker.js'];
 
 PUBLIC_FILES.forEach(file => {

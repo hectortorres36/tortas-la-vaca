@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="100" fill="#1a1a1a"/>
+  <circle cx="100" cy="100" r="90" fill="#f5c518" opacity="0.15"/>
+  <!-- Pan/torta -->
+  <ellipse cx="100" cy="115" rx="55" ry="18" fill="#c8860a"/>
+  <ellipse cx="100" cy="108" rx="55" ry="18" fill="#e8a020"/>
+  <ellipse cx="100" cy="100" rx="55" ry="18" fill="#f5c518"/>
+  <!-- Relleno -->
+  <ellipse cx="100" cy="100" rx="45" ry="10" fill="#8B4513"/>
+  <ellipse cx="100" cy="97" rx="45" ry="10" fill="#a0522d"/>
+  <!-- Letras -->
+  <text x="100" y="158" font-family="Arial Black, sans-serif" font-size="22" font-weight="900" fill="#f5c518" text-anchor="middle">TortaSV</text>
+</svg>
