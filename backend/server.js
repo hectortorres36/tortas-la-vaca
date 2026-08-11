@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path       = require('path');
 const express    = require('express');
 const cors       = require('cors');
 const helmet     = require('helmet');
@@ -14,7 +15,8 @@ const PORT = parseInt(process.env.PORT) || 3000;
 app.set('trust proxy', 1);
 
 // ── Seguridad ───────────────────────────────────────────────
-app.use(helmet({ crossOriginResourcePolicy: false }));
+// CSP desactivado: el frontend usa estilos/scripts inline y fuentes de Google
+app.use(helmet({ crossOriginResourcePolicy: false, contentSecurityPolicy: false }));
 
 // CORS: permitir cualquier origen (necesario para archivos locales y Railway)
 const corsOptions = {
@@ -41,6 +43,15 @@ app.use('/api/pedidos', ordersRouter);
 app.use('/api/admin',   adminRouter);
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
+
+// ── Frontend estático ──────────────────────────────────────
+const PUBLIC_DIR   = path.join(__dirname, '..');
+const PUBLIC_FILES = ['index.html', 'admin.html', 'logo.jpeg', 'logo.svg', 'service-worker.js'];
+
+PUBLIC_FILES.forEach(file => {
+  app.get(`/${file}`, (_req, res) => res.sendFile(path.join(PUBLIC_DIR, file)));
+});
+app.get('/', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'index.html')));
 
 // ── Inicio ──────────────────────────────────────────────────
 (async () => {
