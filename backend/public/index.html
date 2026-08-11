@@ -593,6 +593,48 @@
       50%       { background: #f5c518; transform: scale(1.4); }
     }
 
+    /* ── SKELETON (esqueleto de carga) ── */
+    :root {
+      --skel-base:      rgba(255,255,255,0.06);
+      --skel-highlight: rgba(255,255,255,0.14);
+    }
+    [data-theme="light"] {
+      --skel-base:      rgba(0,0,0,0.06);
+      --skel-highlight: rgba(0,0,0,0.12);
+    }
+    .skeleton {
+      position: fixed; inset: 0; z-index: 9000;
+      background: var(--bg-body);
+      display: flex; justify-content: center;
+      overflow-y: auto;
+      padding: 24px 16px 40px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .skeleton.hide { opacity: 0; visibility: hidden; }
+    .skeleton-card { width: 100%; max-width: 460px; }
+    .skel {
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--skel-base) 25%, var(--skel-highlight) 37%, var(--skel-base) 63%);
+      background-size: 400% 100%;
+      animation: skelShimmer 1.4s ease infinite;
+    }
+    @keyframes skelShimmer {
+      0%   { background-position: 100% 50%; }
+      100% { background-position: 0 50%; }
+    }
+    .skel-header { text-align: center; padding: 6px 0 4px; }
+    .skel-logo { width: 110px; height: 110px; border-radius: 50%; margin: 0 auto; }
+    .skel-title { width: 170px; height: 22px; border-radius: 8px; margin: 14px auto 0; }
+    .skel-sub { width: 90px; height: 10px; border-radius: 6px; margin: 10px auto 0; }
+    .skel-strip { display: flex; gap: 10px; padding: 18px 0 20px; overflow: hidden; }
+    .skel-photo { width: 140px; height: 96px; border-radius: 14px; flex-shrink: 0; }
+    .skel-cat { width: 130px; height: 16px; border-radius: 6px; margin: 16px auto 12px; }
+    .skel-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; gap: 10px; }
+    .skel-item-text { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+    .skel-line { height: 12px; border-radius: 6px; }
+    .skel-line-sm { height: 9px; border-radius: 6px; }
+    .skel-pill { width: 54px; height: 24px; border-radius: 20px; flex-shrink: 0; }
+
     /* Ripple en botón + */
     .add-btn { overflow: hidden; }
     .ripple {
@@ -619,6 +661,32 @@
       <div class="splash-dot"></div>
       <div class="splash-dot"></div>
       <div class="splash-dot"></div>
+    </div>
+  </div>
+
+  <!-- SKELETON -->
+  <div class="skeleton" id="skeleton">
+    <div class="skeleton-card">
+      <div class="skel-header">
+        <div class="skel skel-logo"></div>
+        <div class="skel skel-title"></div>
+        <div class="skel skel-sub"></div>
+      </div>
+      <div class="skel-strip">
+        <div class="skel skel-photo"></div>
+        <div class="skel skel-photo"></div>
+        <div class="skel skel-photo"></div>
+        <div class="skel skel-photo"></div>
+      </div>
+      <div class="skel skel-cat"></div>
+      <div class="skel-item"><div class="skel-item-text"><div class="skel skel-line" style="width:70%"></div><div class="skel skel-line-sm skel" style="width:45%"></div></div><div class="skel skel-pill"></div></div>
+      <div class="skel-item"><div class="skel-item-text"><div class="skel skel-line" style="width:60%"></div><div class="skel skel-line-sm skel" style="width:40%"></div></div><div class="skel skel-pill"></div></div>
+      <div class="skel-item"><div class="skel-item-text"><div class="skel skel-line" style="width:65%"></div><div class="skel skel-line-sm skel" style="width:50%"></div></div><div class="skel skel-pill"></div></div>
+      <div class="skel-item"><div class="skel-item-text"><div class="skel skel-line" style="width:55%"></div><div class="skel skel-line-sm skel" style="width:35%"></div></div><div class="skel skel-pill"></div></div>
+      <div class="skel skel-cat"></div>
+      <div class="skel-item"><div class="skel-item-text"><div class="skel skel-line" style="width:50%"></div><div class="skel skel-line-sm skel" style="width:38%"></div></div><div class="skel skel-pill"></div></div>
+      <div class="skel-item"><div class="skel-item-text"><div class="skel skel-line" style="width:62%"></div><div class="skel skel-line-sm skel" style="width:42%"></div></div><div class="skel skel-pill"></div></div>
+      <div class="skel-item"><div class="skel-item-text"><div class="skel skel-line" style="width:58%"></div><div class="skel skel-line-sm skel" style="width:36%"></div></div><div class="skel skel-pill"></div></div>
     </div>
   </div>
 
@@ -800,10 +868,13 @@
   </div>
 
   <script>
-    // ── SPLASH ───────────────────────────
+    // ── SPLASH + SKELETON ─────────────────
     setTimeout(() => {
       document.getElementById('splash').classList.add('hide');
-    }, 900);
+    }, 1400);
+    setTimeout(() => {
+      document.getElementById('skeleton').classList.add('hide');
+    }, 2100);
 
     // ── TEMA ──────────────────────────────
     const themeBtn = document.querySelector('.theme-toggle');
