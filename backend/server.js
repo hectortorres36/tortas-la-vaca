@@ -47,13 +47,20 @@ app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 // ── Frontend estático ──────────────────────────────────────
 // Copia de los archivos de la raíz del repo: Railway solo despliega esta
 // carpeta (Root Directory = /backend), así que deben vivir aquí también.
-const PUBLIC_DIR   = path.join(__dirname, 'public');
-const PUBLIC_FILES = ['index.html', 'admin.html', 'logo.jpeg', 'logo.svg', 'service-worker.js'];
+const PUBLIC_DIR = path.join(__dirname, 'public');
 
-PUBLIC_FILES.forEach(file => {
-  app.get(`/${file}`, (_req, res) => res.sendFile(path.join(PUBLIC_DIR, file)));
+// HTML y el service worker deben revalidarse siempre (evita servir versiones viejas)
+const NO_CACHE_FILES = ['index.html', 'admin.html', 'service-worker.js'];
+// Assets que casi no cambian: se cachean fuerte en el navegador
+const LONG_CACHE_FILES = ['logo.jpeg', 'logo.svg'];
+
+NO_CACHE_FILES.forEach(file => {
+  app.get(`/${file}`, (_req, res) => res.sendFile(path.join(PUBLIC_DIR, file), { maxAge: 0, cacheControl: false, headers: { 'Cache-Control': 'no-cache' } }));
 });
-app.get('/', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'index.html')));
+LONG_CACHE_FILES.forEach(file => {
+  app.get(`/${file}`, (_req, res) => res.sendFile(path.join(PUBLIC_DIR, file), { maxAge: '7d' }));
+});
+app.get('/', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'index.html'), { maxAge: 0, cacheControl: false, headers: { 'Cache-Control': 'no-cache' } }));
 
 // ── Inicio ──────────────────────────────────────────────────
 (async () => {
