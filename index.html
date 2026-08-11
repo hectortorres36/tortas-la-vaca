@@ -352,9 +352,22 @@
       padding: 16px 16px 0;
       border-top: 1px solid rgba(245,197,24,0.15);
     }
+    .cart-subtotal-row, .cart-discount-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px;
+      font-size: 0.85rem; font-weight: 600;
+      color: var(--text-ingr); transition: color 0.4s;
+    }
+    .cart-discount-row { color: #2ecc71; }
+    .cart-discount-hint {
+      font-size: 0.75rem; color: var(--text-ingr);
+      margin-bottom: 10px; transition: color 0.4s;
+    }
     .cart-total {
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 14px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(245,197,24,0.25);
     }
     .cart-total-label {
       font-size: 1rem; font-weight: 700;
@@ -803,6 +816,15 @@
 
     // ── CARRITO ───────────────────────────
     let carrito = [];
+    const DESCUENTO_MINIMO = 10;
+    const DESCUENTO_PORCENTAJE = 0.10;
+
+    function calcularTotales() {
+      const subtotal = carrito.reduce((s, i) => s + i.precio * i.qty, 0);
+      const descuento = subtotal >= DESCUENTO_MINIMO ? subtotal * DESCUENTO_PORCENTAJE : 0;
+      const total = subtotal - descuento;
+      return { subtotal, descuento, total };
+    }
 
     function agregarItem(nombre, precio) {
       const idx = carrito.findIndex(i => i.nombre === nombre);
@@ -866,7 +888,7 @@
         return;
       }
 
-      const total = carrito.reduce((s, i) => s + i.precio * i.qty, 0);
+      const { subtotal, descuento, total } = calcularTotales();
       const items = carrito.map((i, idx) => `
         <div class="cart-item" data-nombre="${i.nombre}" style="animation-delay:${idx * 0.07}s">
           <div class="cart-item-name">${i.nombre}</div>
@@ -890,6 +912,18 @@
             <label class="cart-notes-label">Peticiones especiales</label>
             <textarea class="cart-notes-input" id="cartNotes" placeholder="Ej: sin aguacate, sin salsa, sin lechuga..." maxlength="200"></textarea>
           </div>
+          ${descuento > 0 ? `
+          <div class="cart-subtotal-row">
+            <span>Subtotal</span>
+            <span>$${subtotal.toFixed(2)}</span>
+          </div>
+          <div class="cart-discount-row">
+            <span>Descuento 10%</span>
+            <span>-$${descuento.toFixed(2)}</span>
+          </div>
+          ` : `
+          <div class="cart-discount-hint">Pide $${(DESCUENTO_MINIMO - subtotal).toFixed(2)} más y obtén 10% de descuento</div>
+          `}
           <div class="cart-total">
             <span class="cart-total-label">Total</span>
             <span class="cart-total-price">$${total.toFixed(2)}</span>
@@ -933,7 +967,7 @@
     }
 
     async function pedirPorWhatsapp() {
-      const total  = carrito.reduce((s, i) => s + i.precio * i.qty, 0);
+      const { subtotal, descuento, total } = calcularTotales();
       const nombre = (document.getElementById('cartName')?.value || '').trim();
       const notas  = (document.getElementById('cartNotes')?.value || '').trim();
 
@@ -945,6 +979,10 @@
       carrito.forEach(i => {
         msg += `• ${i.qty}x ${i.nombre} - $${(i.precio * i.qty).toFixed(2)}\n`;
       });
+      if (descuento > 0) {
+        msg += `\nSubtotal: $${subtotal.toFixed(2)}`;
+        msg += `\nDescuento 10%: -$${descuento.toFixed(2)}`;
+      }
       msg += `\n*Total: $${total.toFixed(2)}*`;
       if (notas) msg += `\n\n📝 *Peticiones especiales:* ${notas}`;
       const url = 'https://wa.me/50372188020?text=' + encodeURIComponent(msg);
