@@ -418,6 +418,13 @@
     .cart-name-input::placeholder { color: var(--text-ingr); }
     .cart-name-input:focus { border-color: #f5c518; }
     html[data-theme="dark"] input[type="time"].cart-name-input { color-scheme: dark; }
+    .cart-name-input.invalid { border-color: #ff6b6b; }
+    .cart-field-error {
+      display: none;
+      font-size: 0.75rem; color: #ff6b6b;
+      margin-top: 5px;
+    }
+    .cart-field-error.show { display: block; }
 
     .cart-notes-wrap {
       margin-bottom: 14px;
@@ -984,8 +991,9 @@
         <div class="cart-items">${items}</div>
         <div class="cart-footer">
           <div class="cart-name-wrap">
-            <label class="cart-name-label">Tu nombre</label>
-            <input class="cart-name-input" id="cartName" type="text" placeholder="Ej: Maria, Juan..." maxlength="40" />
+            <label class="cart-name-label">Tu nombre *</label>
+            <input class="cart-name-input" id="cartName" type="text" placeholder="Ej: Maria, Juan..." maxlength="40" required />
+            <div class="cart-field-error" id="cartNameError">Escribe tu nombre para poder enviar el pedido</div>
           </div>
           <div class="cart-name-wrap">
             <label class="cart-name-label">¿A qué hora lo quieres? (opcional)</label>
@@ -1018,6 +1026,11 @@
           <button class="cart-clear" onclick="vaciarCarrito()">Vaciar pedido</button>
         </div>
       `;
+
+      document.getElementById('cartName')?.addEventListener('input', function () {
+        this.classList.remove('invalid');
+        document.getElementById('cartNameError')?.classList.remove('show');
+      });
     }
 
     function abrirCarrito() {
@@ -1052,9 +1065,17 @@
 
     async function pedirPorWhatsapp() {
       const { subtotal, descuento, total } = calcularTotales();
-      const nombre = (document.getElementById('cartName')?.value || '').trim();
+      const nombreInput = document.getElementById('cartName');
+      const nombre = (nombreInput?.value || '').trim();
       const notas  = (document.getElementById('cartNotes')?.value || '').trim();
       const hora   = (document.getElementById('cartHora')?.value || '').trim();
+
+      if (!nombre) {
+        nombreInput?.classList.add('invalid');
+        document.getElementById('cartNameError')?.classList.add('show');
+        nombreInput?.focus();
+        return;
+      }
 
       // Guardar en BD en segundo plano (no bloquea el envío por WhatsApp)
       guardarPedidoEnBD(nombre, notas, hora, total);
