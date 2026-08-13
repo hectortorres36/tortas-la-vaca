@@ -288,6 +288,24 @@
     }
     .pedido-del-btn:hover { color: var(--red); border-color: var(--red); }
     .pedido-notas  { color: var(--muted); font-size: .82rem; margin-top: .4rem; font-style: italic; }
+    .pedido-hora   { color: var(--muted); font-size: .78rem; }
+
+    .estado-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .72rem;
+      font-weight: 600;
+      padding: .2rem .6rem;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: opacity .2s;
+      font-family: inherit;
+    }
+    .estado-badge:hover { opacity: .85; }
+    .estado-badge.pendiente { background: rgba(245,197,24,.12); color: var(--gold); border-color: rgba(245,197,24,.3); }
+    .estado-badge.listo     { background: rgba(37,211,102,.12); color: var(--green); border-color: rgba(37,211,102,.3); }
 
     .pedido-items  { margin-top: .5rem; display: flex; flex-wrap: wrap; gap: .35rem; }
     .item-chip {
@@ -560,10 +578,13 @@
         <div class="pedido-card" id="pedido-${p.id}">
           <div class="pedido-header">
             <span class="pedido-nombre">👤 ${escHtml(p.cliente_nombre)}</span>
+            <button class="estado-badge ${p.estado}" onclick="toggleEstado(${p.id}, '${p.estado}')" title="Click para cambiar de estado">
+              ${p.estado === 'listo' ? '✅ Listo' : '⏳ Pendiente'}
+            </button>
             <span class="pedido-total">${fmt$(p.total)}</span>
             <button class="pedido-del-btn" onclick="eliminarPedido(${p.id})">✕ Cancelar</button>
           </div>
-          <div class="pedido-fecha">🕐 ${fmtFecha(p.created_at)}</div>
+          <div class="pedido-fecha">🕐 ${fmtFecha(p.created_at)}${p.hora_entrega ? ` &nbsp;·&nbsp; <span class="pedido-hora">🕒 Pidió para las ${escHtml(p.hora_entrega)}</span>` : ''}</div>
           <div class="pedido-items">
             ${(p.items || []).map(it =>
               `<span class="item-chip">${it.cantidad}× ${escHtml(it.nombre_item)} <span class="muted">${fmt$(it.precio_unitario)}</span></span>`
@@ -574,6 +595,21 @@
       `).join('');
     } catch (e) {
       list.innerHTML = `<div class="empty">Error al cargar pedidos: ${escHtml(e.message)}</div>`;
+    }
+  }
+
+  async function toggleEstado(id, estadoActual) {
+    const nuevoEstado = estadoActual === 'listo' ? 'pendiente' : 'listo';
+    try {
+      const res = await fetch(`${API}/admin/pedidos/${id}/estado`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' },
+        body: JSON.stringify({ estado: nuevoEstado }),
+      });
+      if (!res.ok) { alert('Error al actualizar el pedido.'); return; }
+      loadPedidos();
+    } catch {
+      alert('No se pudo conectar al servidor.');
     }
   }
 

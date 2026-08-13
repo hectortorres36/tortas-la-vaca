@@ -95,7 +95,7 @@ router.get('/pedidos', authMiddleware, async (req, res) => {
     const offset = Math.max(parseInt(req.query.offset) || 0,  0);
 
     const [pedidos] = await pool.query(
-      `SELECT id, cliente_nombre, notas, total, created_at
+      `SELECT id, cliente_nombre, notas, hora_entrega, estado, total, created_at
        FROM pedidos
        ORDER BY created_at DESC
        LIMIT ${limit} OFFSET ${offset}`
@@ -119,6 +119,24 @@ router.get('/pedidos', authMiddleware, async (req, res) => {
     res.json(result);
   } catch (err) {
     console.error('Error obteniendo pedidos:', err);
+    res.status(500).json({ error: 'Error interno.' });
+  }
+});
+
+// PATCH /api/admin/pedidos/:id/estado  — marcar un pedido como pendiente/listo
+router.patch('/pedidos/:id/estado', authMiddleware, async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { estado } = req.body;
+  if (!id || id < 1) return res.status(400).json({ error: 'ID inválido.' });
+  if (estado !== 'pendiente' && estado !== 'listo') {
+    return res.status(400).json({ error: 'Estado inválido.' });
+  }
+  try {
+    const [result] = await pool.execute('UPDATE pedidos SET estado = ? WHERE id = ?', [estado, id]);
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'Pedido no encontrado.' });
+    res.json({ ok: true, estado });
+  } catch (err) {
+    console.error('Error actualizando estado del pedido:', err);
     res.status(500).json({ error: 'Error interno.' });
   }
 });
