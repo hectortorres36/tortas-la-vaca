@@ -58,20 +58,37 @@ async function obtenerPedidosPendientes() {
   return pedidos.map(p => ({ ...p, items: itemsMap[p.id] || [] }));
 }
 
+function formatearPedido(p) {
+  let bloque = `*#${p.id}* - ${p.cliente_nombre}`;
+  if (p.hora_entrega) bloque += ` - 🕒 ${p.hora_entrega}`;
+  bloque += '\n';
+  bloque += p.items.map(i => `• ${i.cantidad}x ${i.nombre_item}`).join('\n');
+  bloque += `\nTotal: $${Number(p.total).toFixed(2)}`;
+  if (p.notas) bloque += `\n📝 ${p.notas}`;
+  return bloque;
+}
+
 function formatearLista(pedidos) {
   if (pedidos.length === 0) return '🎉 No hay pedidos pendientes.';
 
-  const bloques = pedidos.map(p => {
-    let bloque = `*#${p.id}* - ${p.cliente_nombre}`;
-    if (p.hora_entrega) bloque += ` - 🕒 ${p.hora_entrega}`;
-    bloque += '\n';
-    bloque += p.items.map(i => `• ${i.cantidad}x ${i.nombre_item}`).join('\n');
-    bloque += `\nTotal: $${Number(p.total).toFixed(2)}`;
-    if (p.notas) bloque += `\n📝 ${p.notas}`;
-    return bloque;
+  const hoyKey = new Date().toISOString().slice(0, 10);
+  const grupos = new Map();
+  for (const p of pedidos) {
+    const key = new Date(p.created_at).toISOString().slice(0, 10);
+    if (!grupos.has(key)) grupos.set(key, []);
+    grupos.get(key).push(p);
+  }
+
+  const secciones = [...grupos.keys()].sort().map(key => {
+    const fechaLegible = new Date(`${key}T12:00:00`).toLocaleDateString('es-SV', {
+      weekday: 'long', day: 'numeric', month: 'long',
+    });
+    const titulo = key === hoyKey ? `📅 *Hoy* (${fechaLegible})` : `📅 *${fechaLegible}*`;
+    const bloques = grupos.get(key).map(formatearPedido);
+    return `${titulo}\n\n${bloques.join('\n\n')}`;
   });
 
-  return `📋 *Pedidos pendientes (${pedidos.length})*\n\n${bloques.join('\n\n')}\n\n_Responde "listo <numero>" para marcar un pedido como entregado._`;
+  return `📋 *Pedidos pendientes (${pedidos.length})*\n\n${secciones.join('\n\n')}\n\n_Responde "listo <numero>" para marcar un pedido como entregado._`;
 }
 
 async function marcarListo(id) {
