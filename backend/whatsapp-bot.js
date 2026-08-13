@@ -27,6 +27,7 @@ function limpiarLocksDeChromium(dir) {
 }
 
 const TRIGGER_LISTA = /^(pedidos|lista)$/i;
+const TRIGGER_LISTA_HOY = /^(pedidos hoy|lista hoy|hoy)$/i;
 const TRIGGER_LISTO = /^(listo|hecho)\s+(\d+)$/i;
 const TRIGGER_AYUDA = /^(ayuda|help)$/i;
 
@@ -36,11 +37,11 @@ function getEstadoQR() {
   return estado;
 }
 
-async function obtenerPedidosPendientes() {
+async function obtenerPedidosPendientes(soloHoy = false) {
   const [pedidos] = await pool.query(
     `SELECT id, cliente_nombre, notas, hora_entrega, total, created_at
      FROM pedidos
-     WHERE estado = 'pendiente'
+     WHERE estado = 'pendiente' ${soloHoy ? 'AND DATE(created_at) = CURDATE()' : ''}
      ORDER BY (hora_entrega IS NULL), hora_entrega ASC, created_at ASC`
   );
   if (pedidos.length === 0) return [];
@@ -68,8 +69,10 @@ function formatearPedido(p) {
   return bloque;
 }
 
-function formatearLista(pedidos) {
-  if (pedidos.length === 0) return '🎉 No hay pedidos pendientes.';
+function formatearLista(pedidos, soloHoy = false) {
+  if (pedidos.length === 0) {
+    return soloHoy ? '🎉 No hay pedidos pendientes para hoy.' : '🎉 No hay pedidos pendientes.';
+  }
 
   const hoyKey = new Date().toISOString().slice(0, 10);
   const grupos = new Map();
@@ -144,6 +147,12 @@ function iniciarWhatsappBot() {
       if (!msg.fromMe) return; // solo el numero del negocio puede pedir la lista
       const texto = (msg.body || '').trim();
 
+      if (TRIGGER_LISTA_HOY.test(texto)) {
+        const pendientes = await obtenerPedidosPendientes(true);
+        await msg.reply(formatearLista(pendientes, true));
+        return;
+      }
+
       if (TRIGGER_LISTA.test(texto)) {
         const pendientes = await obtenerPedidosPendientes();
         await msg.reply(formatearLista(pendientes));
@@ -158,7 +167,7 @@ function iniciarWhatsappBot() {
       }
 
       if (TRIGGER_AYUDA.test(texto)) {
-        await msg.reply('Comandos disponibles:\n• *pedidos* / *lista* - ver pedidos pendientes\n• *listo <numero>* - marcar un pedido como entregado');
+        await msg.reply('Comandos disponibles:\n• *pedidos* / *lista* - ver todos los pedidos pendientes\n• *pedidos hoy* / *hoy* - ver solo los pendientes de hoy\n• *listo <numero>* - marcar un pedido como entregado');
       }
     } catch (err) {
       console.error('Error procesando comando de WhatsApp:', err);
