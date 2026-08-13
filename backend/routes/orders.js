@@ -4,7 +4,7 @@ const { pool } = require('../db');
 
 // POST /api/pedidos  — guarda un pedido nuevo
 router.post('/', async (req, res) => {
-  const { cliente_nombre, items, notas } = req.body;
+  const { cliente_nombre, items, notas, hora_entrega } = req.body;
 
   // Validaciones básicas
   if (!Array.isArray(items) || items.length === 0) {
@@ -25,6 +25,7 @@ router.post('/', async (req, res) => {
 
   const nombre  = (cliente_nombre || 'Anónimo').trim().substring(0, 80);
   const notasSan = (notas || '').trim().substring(0, 500);
+  const horaSan  = (hora_entrega || '').trim().substring(0, 20);
   const total   = items.reduce((sum, i) => sum + i.precio * i.qty, 0);
 
   const conn = await pool.getConnection();
@@ -32,8 +33,8 @@ router.post('/', async (req, res) => {
     await conn.beginTransaction();
 
     const [result] = await conn.execute(
-      'INSERT INTO pedidos (cliente_nombre, notas, total) VALUES (?, ?, ?)',
-      [nombre, notasSan || null, total.toFixed(2)]
+      'INSERT INTO pedidos (cliente_nombre, notas, hora_entrega, total) VALUES (?, ?, ?, ?)',
+      [nombre, notasSan || null, horaSan || null, total.toFixed(2)]
     );
     const pedidoId = result.insertId;
 

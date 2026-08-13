@@ -7,6 +7,7 @@ const rateLimit  = require('express-rate-limit');
 const { testConnection } = require('./db');
 const ordersRouter = require('./routes/orders');
 const adminRouter  = require('./routes/admin');
+const { iniciarWhatsappBot } = require('./whatsapp-bot');
 
 const app  = express();
 const PORT = parseInt(process.env.PORT) || 3000;
@@ -69,4 +70,11 @@ app.get('/', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'index.html'), { 
     console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
     console.log(`📊 Panel admin: abre admin.html en tu navegador`);
   });
+
+  // El bot no debe tumbar el servidor si falla (ej. Chromium no disponible)
+  try {
+    iniciarWhatsappBot();
+  } catch (err) {
+    console.error('❌ Error arrancando el bot de WhatsApp:', err);
+  }
 })();

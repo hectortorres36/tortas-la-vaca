@@ -14,10 +14,13 @@ CREATE TABLE IF NOT EXISTS pedidos (
   id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   cliente_nombre VARCHAR(80)     NOT NULL DEFAULT 'Anónimo',
   notas         TEXT,
+  hora_entrega  VARCHAR(20),
+  estado        ENUM('pendiente', 'listo') NOT NULL DEFAULT 'pendiente',
   total         DECIMAL(8, 2)   NOT NULL,
   created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_cliente (cliente_nombre),
-  INDEX idx_fecha   (created_at)
+  INDEX idx_fecha   (created_at),
+  INDEX idx_estado  (estado)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de ítems por pedido
