@@ -254,6 +254,48 @@
     .amount { font-weight: 600; color: var(--gold); }
     .muted  { color: var(--muted); font-size: .8rem; }
 
+    /* Menu de acciones (submenu) */
+    .menu-dd { position: relative; display: inline-block; }
+    .menu-dd-btn {
+      list-style: none;
+      cursor: pointer;
+      width: 28px; height: 28px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      border: 1px solid var(--border);
+      user-select: none;
+    }
+    .menu-dd-btn::-webkit-details-marker { display: none; }
+    .menu-dd-btn:hover { color: var(--gold); border-color: var(--gold); }
+    .menu-dd[open] .menu-dd-btn { color: var(--gold); border-color: var(--gold); }
+    .menu-dd-content {
+      position: absolute;
+      right: 0; top: calc(100% + 4px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .3rem;
+      min-width: 210px;
+      z-index: 20;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    }
+    .menu-dd-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      color: var(--red);
+      font-family: inherit;
+      font-size: .82rem;
+      padding: .55rem .6rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .menu-dd-item:hover { background: rgba(231,76,60,.12); }
+
     /* Pedidos */
     .pedido-card {
       background: var(--card);
@@ -423,10 +465,11 @@
               <th>Pedidos</th>
               <th>Promedio</th>
               <th>Último pedido</th>
+              <th></th>
             </tr>
           </thead>
           <tbody id="clientesBody">
-            <tr><td colspan="6" class="loading">Cargando...</td></tr>
+            <tr><td colspan="7" class="loading">Cargando...</td></tr>
           </tbody>
         </table>
       </div>
@@ -546,7 +589,7 @@
     try {
       const rows = await apiFetch('/admin/clientes');
       if (!rows.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty">Aún no hay pedidos registrados.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="empty">Aún no hay pedidos registrados.</td></tr>';
         return;
       }
       tbody.innerHTML = rows.map((r, i) => `
@@ -557,10 +600,36 @@
           <td>${r.total_pedidos}</td>
           <td class="muted">${fmt$(r.promedio_pedido)}</td>
           <td class="muted">${fmtFecha(r.ultimo_pedido)}</td>
+          <td>
+            <details class="menu-dd">
+              <summary class="menu-dd-btn">⋮</summary>
+              <div class="menu-dd-content">
+                <button class="menu-dd-item" data-nombre="${escHtml(r.nombre)}" data-count="${r.total_pedidos}" onclick="eliminarPorClienteBtn(this)">🗑️ Eliminar todos sus pedidos</button>
+              </div>
+            </details>
+          </td>
         </tr>
       `).join('');
     } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="6" class="empty">Error al cargar datos: ${escHtml(e.message)}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="empty">Error al cargar datos: ${escHtml(e.message)}</td></tr>`;
+    }
+  }
+
+  function eliminarPorClienteBtn(btn) {
+    eliminarPorCliente(btn.dataset.nombre, btn.dataset.count);
+  }
+
+  async function eliminarPorCliente(nombre, count) {
+    if (!confirm(`¿Eliminar TODOS los pedidos de "${nombre}"? Son ${count} pedido(s) y se borrarán permanentemente.`)) return;
+    try {
+      const res = await fetch(`${API}/admin/clientes/${encodeURIComponent(nombre)}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' },
+      });
+      if (!res.ok) { alert('Error al eliminar los pedidos.'); return; }
+      loadAll();
+    } catch {
+      alert('No se pudo conectar al servidor.');
     }
   }
 

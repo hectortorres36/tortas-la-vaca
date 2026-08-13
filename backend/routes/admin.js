@@ -141,6 +141,19 @@ router.patch('/pedidos/:id/estado', authMiddleware, async (req, res) => {
   }
 });
 
+// DELETE /api/admin/clientes/:nombre  — eliminar todos los pedidos de un cliente (limpieza de pedidos de prueba)
+router.delete('/clientes/:nombre', authMiddleware, async (req, res) => {
+  const nombre = (req.params.nombre || '').trim();
+  if (!nombre) return res.status(400).json({ error: 'Nombre inválido.' });
+  try {
+    const [result] = await pool.execute('DELETE FROM pedidos WHERE cliente_nombre = ?', [nombre]);
+    res.json({ ok: true, eliminados: result.affectedRows });
+  } catch (err) {
+    console.error('Error eliminando pedidos del cliente:', err);
+    res.status(500).json({ error: 'Error interno.' });
+  }
+});
+
 // DELETE /api/admin/pedidos/:id  — eliminar pedido
 router.delete('/pedidos/:id', authMiddleware, async (req, res) => {
   const id = parseInt(req.params.id);
