@@ -9,6 +9,12 @@ const TRIGGER_LISTA = /^(pedidos|lista)$/i;
 const TRIGGER_LISTO = /^(listo|hecho)\s+(\d+)$/i;
 const TRIGGER_AYUDA = /^(ayuda|help)$/i;
 
+// Estado del ultimo QR generado, para poder servirlo por HTTP (ver getEstadoQR)
+const estado = { qr: null, listo: false };
+function getEstadoQR() {
+  return estado;
+}
+
 async function obtenerPedidosPendientes() {
   const [pedidos] = await pool.query(
     `SELECT id, cliente_nombre, notas, hora_entrega, total, created_at
@@ -71,11 +77,16 @@ function iniciarWhatsappBot() {
   });
 
   client.on('qr', qr => {
+    estado.qr = qr;
+    estado.listo = false;
     console.log('📱 Escanea este QR con el WhatsApp del negocio (WhatsApp > Dispositivos vinculados > Vincular un dispositivo):');
+    console.log('   O abre: ' + '/api/admin/whatsapp-qr?password=TU_ADMIN_PASSWORD');
     qrcodeTerminal.generate(qr, { small: true });
   });
 
   client.on('ready', () => {
+    estado.qr = null;
+    estado.listo = true;
     console.log('✅ Bot de WhatsApp listo. Escribete a ti mismo "pedidos" para ver la lista.');
   });
 
@@ -122,4 +133,4 @@ function iniciarWhatsappBot() {
   return client;
 }
 
-module.exports = { iniciarWhatsappBot };
+module.exports = { iniciarWhatsappBot, getEstadoQR };

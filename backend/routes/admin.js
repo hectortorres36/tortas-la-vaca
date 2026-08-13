@@ -1,8 +1,10 @@
 const express = require('express');
 const router  = express.Router();
 const jwt     = require('jsonwebtoken');
+const QRCode  = require('qrcode');
 const rateLimit = require('express-rate-limit');
 const { pool } = require('../db');
+const { getEstadoQR } = require('../whatsapp-bot');
 
 const JWT_SECRET     = process.env.JWT_SECRET     || process.env.JWT_SECRETO     || 'cambiar_en_produccion';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.ADMIN_CONTRASEÑA || 'admin123';
@@ -39,6 +41,29 @@ router.post('/login', loginLimiter, (req, res) => {
   }
   const token = jwt.sign({ role: 'admin' }, JWT_SECRET, { expiresIn: '8h' });
   res.json({ ok: true, token });
+});
+
+// GET /api/admin/whatsapp-qr?password=...  — imagen del QR para vincular el bot de WhatsApp
+router.get('/whatsapp-qr', loginLimiter, async (req, res) => {
+  if (!req.query.password || req.query.password !== ADMIN_PASSWORD) {
+    return res.status(401).send('Contraseña incorrecta.');
+  }
+  const { qr, listo } = getEstadoQR();
+  if (listo) {
+    return res.status(200).send('✅ El bot de WhatsApp ya está vinculado. No hay QR pendiente.');
+  }
+  if (!qr) {
+    return res.status(202).send('⏳ El bot todavía no generó un QR. Espera unos segundos y recarga esta página.');
+  }
+  try {
+    const png = await QRCode.toBuffer(qr, { width: 500, margin: 2 });
+    res.set('Content-Type', 'image/png');
+    res.set('Cache-Control', 'no-store');
+    res.send(png);
+  } catch (err) {
+    console.error('Error generando QR de WhatsApp:', err);
+    res.status(500).send('Error generando el QR.');
+  }
 });
 
 // GET /api/admin/clientes  — top clientes por gasto total
