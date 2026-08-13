@@ -467,6 +467,28 @@
     }
     .refresh-btn:hover { color: var(--gold); border-color: rgba(245,197,24,.4); background: rgba(245,197,24,.06); }
 
+    .filter-chips {
+      display: inline-flex;
+      gap: .2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: .25rem;
+    }
+    .filter-chip {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: .78rem;
+      color: var(--muted);
+      padding: .4rem .9rem;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: color .2s, background .2s;
+    }
+    .filter-chip:hover { color: var(--text); }
+    .filter-chip.active { background: var(--gold); color: #1a1400; font-weight: 600; }
+
     @media (max-width: 500px) {
       th, td { padding: .6rem .7rem; }
       .stat-value { font-size: 1.4rem; }
@@ -550,8 +572,12 @@
 
     <!-- Tab: Pedidos -->
     <div class="tab-panel" id="tab-pedidos">
-      <div style="display:flex;align-items:center;margin-bottom:1rem;">
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:.7rem;margin-bottom:1rem;">
         <span class="section-title" style="margin:0">Pedidos recientes</span>
+        <div class="filter-chips">
+          <button class="filter-chip active" id="filtroTodos" onclick="setFiltroPedidos('todos')">Todos</button>
+          <button class="filter-chip" id="filtroHoy" onclick="setFiltroPedidos('hoy')">📅 Hoy</button>
+        </div>
         <button class="refresh-btn" onclick="loadPedidos()">↻ Actualizar</button>
       </div>
       <div id="pedidosList"><div class="loading">Cargando...</div></div>
@@ -707,13 +733,24 @@
   }
 
   // ── Pedidos ───────────────────────────────────────────────
+  let filtroPedidosActual = 'todos';
+
+  function setFiltroPedidos(f) {
+    filtroPedidosActual = f;
+    document.getElementById('filtroTodos').classList.toggle('active', f === 'todos');
+    document.getElementById('filtroHoy').classList.toggle('active', f === 'hoy');
+    loadPedidos();
+  }
+
   async function loadPedidos() {
     const list = document.getElementById('pedidosList');
     list.innerHTML = '<div class="loading">Cargando...</div>';
     try {
-      const pedidos = await apiFetch('/admin/pedidos?limit=50');
+      const query = '/admin/pedidos?limit=50' + (filtroPedidosActual === 'hoy' ? '&hoy=1' : '');
+      const pedidos = await apiFetch(query);
       if (!pedidos.length) {
-        list.innerHTML = '<div class="empty"><span class="empty-icon">🌮</span>Aún no hay pedidos registrados.</div>';
+        const msg = filtroPedidosActual === 'hoy' ? 'No hay pedidos de hoy.' : 'Aún no hay pedidos registrados.';
+        list.innerHTML = `<div class="empty"><span class="empty-icon">🌮</span>${msg}</div>`;
         return;
       }
       list.innerHTML = pedidos.map(p => `

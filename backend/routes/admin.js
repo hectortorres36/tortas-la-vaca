@@ -93,10 +93,12 @@ router.get('/pedidos', authMiddleware, async (req, res) => {
   try {
     const limit  = Math.min(parseInt(req.query.limit)  || 50, 200);
     const offset = Math.max(parseInt(req.query.offset) || 0,  0);
+    const soloHoy = req.query.hoy === '1';
 
     const [pedidos] = await pool.query(
       `SELECT id, cliente_nombre, notas, hora_entrega, estado, total, created_at
        FROM pedidos
+       WHERE 1=1 ${soloHoy ? 'AND DATE(created_at) = CURDATE()' : ''}
        ORDER BY created_at DESC
        LIMIT ${limit} OFFSET ${offset}`
     );
