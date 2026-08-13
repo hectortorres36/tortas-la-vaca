@@ -5,27 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin – Tortas La Vaca</title>
   <link rel="icon" type="image/jpeg" href="logo.jpeg" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Satisfy&family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --gold:    #f5c518;
-      --dark:    #111;
-      --surface: #1a1a1a;
-      --card:    #242424;
-      --border:  #333;
-      --text:    #e8e8e8;
-      --muted:   #888;
-      --green:   #25D366;
-      --red:     #e74c3c;
+      --gold:      #f5c518;
+      --gold-dim:  #e0a800;
+      --dark:      #0a0a0a;
+      --surface:   #17140d;
+      --card:      #1e1a10;
+      --card-hi:   #241f14;
+      --border:    #35301f;
+      --text:      #ede8dc;
+      --muted:     #8d8672;
+      --green:     #25D366;
+      --red:       #e15656;
+      --radius:    14px;
+      --shadow:    0 10px 30px rgba(0,0,0,.45);
     }
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: var(--dark);
+      background:
+        radial-gradient(ellipse 900px 500px at 15% -10%, rgba(245,197,24,.08), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 100% 0%, rgba(245,197,24,.05), transparent 55%),
+        var(--dark);
+      background-attachment: fixed;
       color: var(--text);
       min-height: 100vh;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ── LOGIN ── */
@@ -38,37 +51,52 @@
     }
 
     .login-card {
-      background: var(--surface);
+      background: linear-gradient(180deg, var(--card-hi), var(--surface));
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2.5rem 2rem;
+      border-radius: 20px;
+      padding: 2.6rem 2.2rem 2.2rem;
       width: 100%;
       max-width: 380px;
       text-align: center;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(245,197,24,.05);
+      animation: fadeUp .5s ease both;
+      position: relative;
+      overflow: hidden;
+    }
+    .login-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, transparent, var(--gold) 40%, #ff9500 60%, transparent);
     }
 
     .login-logo {
-      font-size: 2.8rem;
-      margin-bottom: .3rem;
+      font-size: 3.2rem;
+      margin-bottom: .4rem;
+      filter: drop-shadow(0 4px 14px rgba(245,197,24,.35));
     }
 
     .login-title {
-      font-size: 1.3rem;
-      font-weight: 700;
+      font-family: 'Satisfy', cursive;
+      font-size: 2rem;
+      font-weight: 400;
       color: var(--gold);
-      margin-bottom: .3rem;
+      margin-bottom: .2rem;
+      text-shadow: 0 2px 16px rgba(245,197,24,.3);
     }
 
     .login-sub {
-      font-size: .82rem;
+      font-size: .74rem;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 2rem;
     }
 
     .login-input {
       width: 100%;
-      padding: .75rem 1rem;
-      background: var(--card);
+      padding: .8rem 1rem;
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
       color: var(--text);
@@ -76,26 +104,28 @@
       font-size: .95rem;
       margin-bottom: 1rem;
       outline: none;
-      transition: border-color .2s;
+      transition: border-color .2s, box-shadow .2s;
     }
 
-    .login-input:focus { border-color: var(--gold); }
+    .login-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245,197,24,.12); }
 
     .login-btn {
       width: 100%;
-      padding: .75rem;
-      background: var(--gold);
-      color: #111;
+      padding: .8rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      color: #1a1400;
       font-family: inherit;
       font-weight: 700;
       font-size: 1rem;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      transition: opacity .2s;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 16px rgba(245,197,24,.25);
     }
 
-    .login-btn:hover { opacity: .88; }
+    .login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,197,24,.35); }
+    .login-btn:active { transform: translateY(0); }
 
     .login-error {
       color: var(--red);
@@ -108,9 +138,11 @@
     #dashboard { display: none; }
 
     .topbar {
-      background: var(--surface);
+      background: linear-gradient(180deg, rgba(30,26,16,.9), rgba(23,20,13,.75));
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
-      padding: 1rem 1.5rem;
+      padding: 1.1rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -118,21 +150,30 @@
       top: 0;
       z-index: 10;
     }
+    .topbar::after {
+      content: '';
+      position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(245,197,24,.5) 30%, rgba(245,197,24,.5) 70%, transparent);
+    }
 
     .topbar-title {
-      font-weight: 700;
-      font-size: 1.1rem;
+      font-family: 'Satisfy', cursive;
+      font-weight: 400;
+      font-size: 1.5rem;
       color: var(--gold);
+      letter-spacing: .5px;
     }
     .topbar-title a, .login-logo a {
       color: inherit;
       text-decoration: none;
+      transition: opacity .2s;
     }
     .topbar-title a:hover, .login-logo a:hover {
-      text-decoration: underline;
+      opacity: .8;
+      text-decoration: none;
     }
 
-    .topbar-sub { font-size: .78rem; color: var(--muted); }
+    .topbar-sub { font-size: .72rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: .1rem; }
 
     .logout-btn {
       background: transparent;
@@ -140,58 +181,84 @@
       color: var(--muted);
       font-family: inherit;
       font-size: .8rem;
-      padding: .4rem .9rem;
-      border-radius: 8px;
+      padding: .5rem 1rem;
+      border-radius: 20px;
       cursor: pointer;
-      transition: color .2s, border-color .2s;
+      transition: color .2s, border-color .2s, background .2s;
     }
 
-    .logout-btn:hover { color: var(--red); border-color: var(--red); }
+    .logout-btn:hover { color: var(--red); border-color: rgba(225,86,86,.4); background: rgba(225,86,86,.08); }
 
-    .main-content { padding: 1.5rem; max-width: 1100px; margin: 0 auto; }
+    .main-content { padding: 1.75rem 1.5rem 3rem; max-width: 1100px; margin: 0 auto; }
 
     /* Tabs */
     .tabs {
-      display: flex;
-      gap: .5rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0;
+      display: inline-flex;
+      gap: .2rem;
+      margin-bottom: 1.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: .3rem;
     }
 
     .tab-btn {
       background: none;
       border: none;
       font-family: inherit;
-      font-size: .9rem;
+      font-size: .86rem;
       color: var(--muted);
-      padding: .6rem 1rem;
+      padding: .55rem 1.1rem;
       cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: color .2s, border-color .2s;
-      margin-bottom: -1px;
+      border-radius: 9px;
+      transition: color .2s, background .2s;
     }
+    .tab-btn:hover { color: var(--text); }
 
-    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 600; }
+    .tab-btn.active { color: #1a1400; background: var(--gold); font-weight: 600; }
 
     .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
+    .tab-panel.active { display: block; animation: fadeUp .35s ease both; }
 
     /* Stats cards */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 2.25rem;
     }
 
     .stat-card {
-      background: var(--card);
+      background: linear-gradient(160deg, var(--card-hi), var(--card));
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.2rem 1rem;
+      border-radius: var(--radius);
+      padding: 1.3rem 1rem 1.1rem;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      animation: fadeUp .45s ease both;
     }
+    .stat-card:nth-child(1) { animation-delay: .02s; }
+    .stat-card:nth-child(2) { animation-delay: .06s; }
+    .stat-card:nth-child(3) { animation-delay: .10s; }
+    .stat-card:nth-child(4) { animation-delay: .14s; }
+    .stat-card:nth-child(5) { animation-delay: .18s; }
+    .stat-card:nth-child(6) { animation-delay: .22s; }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.4);
+      border-color: rgba(245,197,24,.3);
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0; transition: opacity .2s;
+    }
+    .stat-card:hover::before { opacity: 1; }
+
+    .stat-icon { font-size: 1.15rem; margin-bottom: .4rem; opacity: .85; }
 
     .stat-value {
       font-size: 1.7rem;
@@ -200,13 +267,15 @@
       line-height: 1.1;
     }
 
-    .stat-label { font-size: .75rem; color: var(--muted); margin-top: .3rem; }
+    .stat-label { font-size: .73rem; color: var(--muted); margin-top: .35rem; letter-spacing: .3px; }
 
     /* Tabla */
     .table-wrap {
       overflow-x: auto;
-      border-radius: 12px;
+      border-radius: var(--radius);
       border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      animation: fadeUp .4s ease both;
     }
 
     table {
@@ -217,23 +286,26 @@
 
     thead { background: var(--surface); }
     th {
-      padding: .85rem 1rem;
+      padding: .9rem 1rem;
       text-align: left;
       font-weight: 600;
+      font-size: .78rem;
+      letter-spacing: .4px;
+      text-transform: uppercase;
       color: var(--gold);
       white-space: nowrap;
       border-bottom: 1px solid var(--border);
     }
 
     td {
-      padding: .8rem 1rem;
-      border-bottom: 1px solid #2a2a2a;
+      padding: .85rem 1rem;
+      border-bottom: 1px solid #2a2416;
       color: var(--text);
       vertical-align: top;
     }
 
     tr:last-child td { border-bottom: none; }
-    tr:hover td { background: rgba(245,197,24,.04); }
+    tr:hover td { background: rgba(245,197,24,.05); }
 
     .rank-badge {
       display: inline-flex;
@@ -247,9 +319,9 @@
       color: var(--muted);
     }
 
-    .rank-badge.gold   { background: #f5c518; color: #111; }
-    .rank-badge.silver { background: #aaa;    color: #111; }
-    .rank-badge.bronze { background: #cd7f32; color: #111; }
+    .rank-badge.gold   { background: linear-gradient(135deg, #f5c518, #e0a800); color: #1a1400; box-shadow: 0 2px 8px rgba(245,197,24,.4); }
+    .rank-badge.silver { background: linear-gradient(135deg, #d4d4d4, #a8a8a8); color: #1a1400; }
+    .rank-badge.bronze { background: linear-gradient(135deg, #d68a4a, #b06a2e); color: #1a1400; }
 
     .amount { font-weight: 600; color: var(--gold); }
     .muted  { color: var(--muted); font-size: .8rem; }
@@ -259,27 +331,29 @@
     .menu-dd-btn {
       list-style: none;
       cursor: pointer;
-      width: 28px; height: 28px;
+      width: 30px; height: 30px;
       display: inline-flex; align-items: center; justify-content: center;
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--muted);
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       border: 1px solid var(--border);
       user-select: none;
+      transition: color .2s, border-color .2s, background .2s;
     }
     .menu-dd-btn::-webkit-details-marker { display: none; }
-    .menu-dd-btn:hover { color: var(--gold); border-color: var(--gold); }
+    .menu-dd-btn:hover { color: var(--gold); border-color: var(--gold); background: rgba(245,197,24,.06); }
     .menu-dd[open] .menu-dd-btn { color: var(--gold); border-color: var(--gold); }
     .menu-dd-content {
       position: absolute;
-      right: 0; top: calc(100% + 4px);
-      background: var(--card);
+      right: 0; top: calc(100% + 6px);
+      background: var(--card-hi);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: .3rem;
-      min-width: 210px;
+      border-radius: 10px;
+      padding: .35rem;
+      min-width: 220px;
       z-index: 20;
-      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      box-shadow: 0 12px 32px rgba(0,0,0,.5);
+      animation: fadeUp .18s ease both;
     }
     .menu-dd-item {
       display: block;
@@ -290,20 +364,24 @@
       color: var(--red);
       font-family: inherit;
       font-size: .82rem;
-      padding: .55rem .6rem;
-      border-radius: 6px;
+      padding: .6rem .65rem;
+      border-radius: 7px;
       cursor: pointer;
+      transition: background .15s;
     }
-    .menu-dd-item:hover { background: rgba(231,76,60,.12); }
+    .menu-dd-item:hover { background: rgba(225,86,86,.12); }
 
     /* Pedidos */
     .pedido-card {
-      background: var(--card);
+      background: linear-gradient(160deg, var(--card-hi), var(--card));
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1rem 1.2rem;
+      border-radius: var(--radius);
+      padding: 1.1rem 1.3rem;
       margin-bottom: .8rem;
+      transition: border-color .2s, transform .15s;
+      animation: fadeUp .3s ease both;
     }
+    .pedido-card:hover { border-color: rgba(245,197,24,.22); }
 
     .pedido-header {
       display: flex;
@@ -311,7 +389,7 @@
       justify-content: space-between;
       margin-bottom: .5rem;
       flex-wrap: wrap;
-      gap: .3rem;
+      gap: .5rem;
     }
 
     .pedido-nombre { font-weight: 600; }
@@ -319,17 +397,17 @@
     .pedido-fecha  { color: var(--muted); font-size: .78rem; }
     .pedido-del-btn {
       background: transparent;
-      border: 1px solid #444;
+      border: 1px solid var(--border);
       color: var(--muted);
       font-size: .75rem;
-      padding: .25rem .6rem;
-      border-radius: 6px;
+      padding: .3rem .7rem;
+      border-radius: 20px;
       cursor: pointer;
-      transition: color .2s, border-color .2s;
+      transition: color .2s, border-color .2s, background .2s;
       margin-left: auto;
     }
-    .pedido-del-btn:hover { color: var(--red); border-color: var(--red); }
-    .pedido-notas  { color: var(--muted); font-size: .82rem; margin-top: .4rem; font-style: italic; }
+    .pedido-del-btn:hover { color: var(--red); border-color: rgba(225,86,86,.4); background: rgba(225,86,86,.08); }
+    .pedido-notas  { color: var(--muted); font-size: .82rem; margin-top: .5rem; font-style: italic; }
     .pedido-hora   { color: var(--muted); font-size: .78rem; }
 
     .estado-badge {
@@ -338,43 +416,38 @@
       gap: .3rem;
       font-size: .72rem;
       font-weight: 600;
-      padding: .2rem .6rem;
+      padding: .3rem .7rem;
       border-radius: 20px;
       border: 1px solid transparent;
       cursor: pointer;
-      transition: opacity .2s;
+      transition: opacity .2s, transform .15s;
       font-family: inherit;
     }
-    .estado-badge:hover { opacity: .85; }
+    .estado-badge:hover { opacity: .85; transform: translateY(-1px); }
     .estado-badge.pendiente { background: rgba(245,197,24,.12); color: var(--gold); border-color: rgba(245,197,24,.3); }
     .estado-badge.listo     { background: rgba(37,211,102,.12); color: var(--green); border-color: rgba(37,211,102,.3); }
 
-    .pedido-items  { margin-top: .5rem; display: flex; flex-wrap: wrap; gap: .35rem; }
+    .pedido-items  { margin-top: .6rem; display: flex; flex-wrap: wrap; gap: .4rem; }
     .item-chip {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: .2rem .7rem;
+      padding: .25rem .75rem;
       font-size: .78rem;
     }
 
     /* Loading */
-    .loading {
+    .loading, .empty {
       text-align: center;
       color: var(--muted);
-      padding: 2rem;
       font-size: .9rem;
     }
-
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 3rem 1rem;
-      font-size: .9rem;
-    }
+    .loading { padding: 2.5rem; }
+    .empty { padding: 3.5rem 1rem; }
+    .empty-icon { display: block; font-size: 2.2rem; margin-bottom: .6rem; opacity: .7; }
 
     .section-title {
-      font-size: 1rem;
+      font-size: 1.02rem;
       font-weight: 600;
       margin-bottom: 1rem;
       color: var(--text);
@@ -386,13 +459,13 @@
       color: var(--muted);
       font-family: inherit;
       font-size: .8rem;
-      padding: .35rem .8rem;
-      border-radius: 8px;
+      padding: .4rem .9rem;
+      border-radius: 20px;
       cursor: pointer;
-      margin-left: .5rem;
-      transition: color .2s;
+      margin-left: .6rem;
+      transition: color .2s, border-color .2s, background .2s;
     }
-    .refresh-btn:hover { color: var(--gold); border-color: var(--gold); }
+    .refresh-btn:hover { color: var(--gold); border-color: rgba(245,197,24,.4); background: rgba(245,197,24,.06); }
 
     @media (max-width: 500px) {
       th, td { padding: .6rem .7rem; }
@@ -435,12 +508,12 @@
 
     <!-- Stats -->
     <div class="stats-grid" id="statsGrid">
-      <div class="stat-card"><div class="stat-value" id="s-total-pedidos">—</div><div class="stat-label">Pedidos totales</div></div>
-      <div class="stat-card"><div class="stat-value" id="s-ingresos">—</div><div class="stat-label">Ingresos totales</div></div>
-      <div class="stat-card"><div class="stat-value" id="s-ticket">—</div><div class="stat-label">Ticket promedio</div></div>
-      <div class="stat-card"><div class="stat-value" id="s-clientes">—</div><div class="stat-label">Clientes únicos</div></div>
-      <div class="stat-card"><div class="stat-value" id="s-hoy-pedidos">—</div><div class="stat-label">Pedidos hoy</div></div>
-      <div class="stat-card"><div class="stat-value" id="s-hoy-ingresos">—</div><div class="stat-label">Ingresos hoy</div></div>
+      <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-value" id="s-total-pedidos">—</div><div class="stat-label">Pedidos totales</div></div>
+      <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="s-ingresos">—</div><div class="stat-label">Ingresos totales</div></div>
+      <div class="stat-card"><div class="stat-icon">🎟️</div><div class="stat-value" id="s-ticket">—</div><div class="stat-label">Ticket promedio</div></div>
+      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="s-clientes">—</div><div class="stat-label">Clientes únicos</div></div>
+      <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value" id="s-hoy-pedidos">—</div><div class="stat-label">Pedidos hoy</div></div>
+      <div class="stat-card"><div class="stat-icon">💵</div><div class="stat-value" id="s-hoy-ingresos">—</div><div class="stat-label">Ingresos hoy</div></div>
     </div>
 
     <!-- Tabs -->
@@ -585,11 +658,11 @@
   // ── Clientes ──────────────────────────────────────────────
   async function loadClientes() {
     const tbody = document.getElementById('clientesBody');
-    tbody.innerHTML = '<tr><td colspan="6" class="loading">Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">Cargando...</td></tr>';
     try {
       const rows = await apiFetch('/admin/clientes');
       if (!rows.length) {
-        tbody.innerHTML = '<tr><td colspan="7" class="empty">Aún no hay pedidos registrados.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="empty"><span class="empty-icon">🐄</span>Aún no hay pedidos registrados.</td></tr>';
         return;
       }
       tbody.innerHTML = rows.map((r, i) => `
@@ -640,7 +713,7 @@
     try {
       const pedidos = await apiFetch('/admin/pedidos?limit=50');
       if (!pedidos.length) {
-        list.innerHTML = '<div class="empty">Aún no hay pedidos registrados.</div>';
+        list.innerHTML = '<div class="empty"><span class="empty-icon">🌮</span>Aún no hay pedidos registrados.</div>';
         return;
       }
       list.innerHTML = pedidos.map(p => `
