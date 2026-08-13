@@ -1,9 +1,30 @@
+const fs = require('fs');
 const path = require('path');
 const qrcodeTerminal = require('qrcode-terminal');
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const { pool } = require('./db');
 
 const DATA_PATH = process.env.WWEBJS_DATA_PATH || path.join(__dirname, '.wwebjs_auth');
+
+// El contenedor anterior puede morir sin cerrar Chromium limpiamente y dejar
+// un lock de perfil que impide arrancar en el contenedor nuevo (mismo volumen)
+const LOCK_FILES = ['SingletonLock', 'SingletonCookie', 'SingletonSocket'];
+function limpiarLocksDeChromium(dir) {
+  if (!fs.existsSync(dir)) return;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      limpiarLocksDeChromium(full);
+    } else if (LOCK_FILES.includes(entry.name)) {
+      try {
+        fs.unlinkSync(full);
+        console.log('🧹 Lock de Chromium eliminado:', full);
+      } catch (err) {
+        console.error('No se pudo eliminar lock', full, err.message);
+      }
+    }
+  }
+}
 
 const TRIGGER_LISTA = /^(pedidos|lista)$/i;
 const TRIGGER_LISTO = /^(listo|hecho)\s+(\d+)$/i;
@@ -67,6 +88,8 @@ async function marcarListo(id) {
 }
 
 function iniciarWhatsappBot() {
+  limpiarLocksDeChromium(DATA_PATH);
+
   const client = new Client({
     authStrategy: new LocalAuth({ dataPath: DATA_PATH }),
     puppeteer: {
